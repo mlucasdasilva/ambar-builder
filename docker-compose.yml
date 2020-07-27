@@ -173,7 +173,7 @@ services:
       - id=0
       - api_url=http://serviceapi:8081
       - rabbit_host=amqp://rabbit
-  crawler1:
+  my-crawler:
     depends_on: 
       serviceapi: 
         condition: service_healthy 
@@ -187,7 +187,11 @@ services:
     expose:
       - "8082"
     environment:      
-      - name=crawler1
+      - name=my-crawler
+      - ignoreFolders=**/ForSharing/**
+      - ignoreExtensions=.{exe,dll,rar}
+      - ignoreFileNames=*backup*
+      - maxFileSize=15mb
     volumes:
       - ${pathToCrawl}:/usr/data
 
