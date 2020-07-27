@@ -8,4 +8,5 @@ COPY redis.conf /usr/local/etc/redis/redis.conf
 CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 
 HEALTHCHECK --interval=5s --timeout=30s --retries=50 \
-  CMD curl -f localhost:6379 || exit 1
+#  CMD curl -f localhost:6379 || exit 1
+  CMD redis-cli  info > /dev/null || exit 1

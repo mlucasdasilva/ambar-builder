@@ -24,6 +24,9 @@ services:
     image: mlucasdasilva/ambar-es:2.1
     build:
       context: ./ElasticSearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     expose:
       - "9200" 
     environment:
@@ -40,6 +43,25 @@ services:
       - IPC_LOCK
     volumes:
       - es-data:/usr/share/elasticsearch/data
+  kibana:
+    networks:
+      - internal_network
+#    image: kibana:5.6.3
+    image: mlucasdasilva/ambar-kibana:2.1
+    build:
+      context: ./Kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      es:
+        condition: service_healthy
+    links:
+      - es:elasticsearch
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
   rabbit:
     restart: always
     networks:
@@ -55,11 +77,11 @@ services:
     volumes:
       - rabbit-data:/var/lib/rabbitmq
   redis:
+    networks:
+      - internal_network
     restart: always
     sysctls:
       - net.core.somaxconn=1024
-    networks:
-      - internal_network
 #    image: repo.ambar.cloud:443/ambar-redis:2.1
     image: mlucasdasilva/ambar-redis:2.1
     build:
