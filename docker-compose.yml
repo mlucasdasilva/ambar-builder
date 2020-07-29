@@ -4,10 +4,17 @@ networks:
 services:      
   db:
 #    image: repo.ambar.cloud:443/ambar-mongodb:2.1
-    image: mlucasdasilva/ambar-mongodb:2.1
+    image: ${DOCKER_REGISTRY}/ambar-mongodb:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./MongoDB
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     environment:
       - cacheSizeGB=2
     volumes:
@@ -18,10 +25,17 @@ services:
       - internal_network
   es:
 #    image: repo.ambar.cloud:443/ambar-es:2.1
-    image: mlucasdasilva/ambar-es:2.1
+    image: ${DOCKER_REGISTRY}/ambar-es:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./ElasticSearch
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -45,10 +59,17 @@ services:
       - internal_network
   kibana:
 #    image: kibana:5.6.3
-    image: mlucasdasilva/ambar-kibana:2.1
+    image: ${DOCKER_REGISTRY}/ambar-kibana:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./Kibana
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     ports:
       - "5601:5601"
     depends_on:
@@ -65,10 +86,17 @@ services:
       - internal_network
   rabbit:
 #    image: repo.ambar.cloud:443/ambar-rabbit:2.1
-    image: mlucasdasilva/ambar-rabbit:2.1
+    image: ${DOCKER_REGISTRY}/ambar-rabbit:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./Rabbit
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     hostname: rabbit
     expose:
       - "15672"
@@ -79,10 +107,17 @@ services:
       - internal_network
   redis:
 #    image: repo.ambar.cloud:443/ambar-redis:2.1
-    image: mlucasdasilva/ambar-redis:2.1
+    image: ${DOCKER_REGISTRY}/ambar-redis:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./Redis
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     expose:
       - "6379" 
     sysctls:
@@ -91,10 +126,17 @@ services:
       - internal_network
   serviceapi:
 #    image: repo.ambar.cloud:443/ambar-serviceapi:2.1
-    image: mlucasdasilva/ambar-serviceapi:2.1
+    image: ${DOCKER_REGISTRY}/ambar-serviceapi:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./ServiceApi
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     depends_on:
       redis:
         condition: service_healthy
@@ -119,10 +161,17 @@ services:
       - internal_network
   webapi:
 #    image: repo.ambar.cloud:443/ambar-webapi:2.1
-    image: mlucasdasilva/ambar-webapi:2.1
+    image: ${DOCKER_REGISTRY}/ambar-webapi:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./WebApi
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     depends_on:
       serviceapi:
         condition: service_healthy
@@ -144,10 +193,17 @@ services:
       - internal_network
   frontend:
 #    image: repo.ambar.cloud:443/ambar-frontend:2.1
-    image: mlucasdasilva/ambar-frontend:2.1
+    image: ${DOCKER_REGISTRY}/ambar-frontend:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./FrontEnd
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     depends_on:
       webapi:
         condition: service_healthy
@@ -161,10 +217,17 @@ services:
       - internal_network
   pipeline0:
 #    image: repo.ambar.cloud:443/ambar-pipeline:2.1
-    image: mlucasdasilva/ambar-pipeline:2.1
+    image: ${DOCKER_REGISTRY}/ambar-pipeline:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./Pipeline
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     depends_on: 
       serviceapi: 
         condition: service_healthy                            
@@ -176,10 +239,17 @@ services:
       - internal_network  
   my-crawler:
 #    image: repo.ambar.cloud:443/ambar-local-crawler:2.1
-    image: mlucasdasilva/ambar-local-crawler:2.1
+    image: ${DOCKER_REGISTRY}/ambar-local-crawler:2.1${DOCKER_IMAGE_VERSION}
     restart: always
     build:
       context: ./LocalCrawler
+      args:
+        - http_proxy=${HTTP_PROXY}
+        - https_proxy=${HTTPS_PROXY}
+        - HTTP_PROXY=${HTTP_PROXY}
+        - HTTPS_PROXY=${HTTPS_PROXY}
+        - no_proxy=${NO_PROXY}
+        - NO_PROXY=${NO_PROXY}
     depends_on: 
       serviceapi: 
         condition: service_healthy 
