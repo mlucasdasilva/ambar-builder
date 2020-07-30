@@ -1,2 +1,2 @@
 # ambar-builder
-Projeto to build ambar search app
+This project automate the build of ambar search engine app
