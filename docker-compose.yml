@@ -37,8 +37,8 @@ services:
         - no_proxy=${NO_PROXY}
         - NO_PROXY=${NO_PROXY}
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "${PORT_ES_1:-9200}:9200"
+      - "${PORT_ES_2:-9300}:9300"
     expose:
       - "9200" 
     environment:
@@ -71,7 +71,7 @@ services:
         - no_proxy=${NO_PROXY}
         - NO_PROXY=${NO_PROXY}
     ports:
-      - "5601:5601"
+      - "${PORT_KIBANA:-5601}:5601"
     depends_on:
       es:
         condition: service_healthy
@@ -186,7 +186,7 @@ services:
       - SLAO_HOSTNAME=ambar
       - SLAO_API_KEY=  
     ports:
-      - "8080:8080"
+      - "${PORT_WEBAPI:-8080}:8080"
     expose:
       - "8080"
     networks:
@@ -208,11 +208,11 @@ services:
       webapi:
         condition: service_healthy
     ports:
-      - "80:80"
+      - "${PORT_FRONTENT:-80}:80"
     expose:
       - "80"
     environment:
-      - api=http://${ambarHostIpAddress}:8080  
+      - api=http://${ambarHostIpAddress}:${PORT_WEBAPI:-8080}
     networks:
       - internal_network
   pipeline0:
@@ -237,7 +237,7 @@ services:
       - rabbit_host=amqp://rabbit
     networks:
       - internal_network  
-  my.crawler:
+  my-crawler:
 #    image: repo.ambar.cloud:443/ambar-local-crawler:2.1
     image: ${DOCKER_REGISTRY}/ambar-local-crawler:2.1${DOCKER_IMAGE_VERSION}
     restart: always
@@ -251,40 +251,24 @@ services:
         - no_proxy=${NO_PROXY}
         - NO_PROXY=${NO_PROXY}
     depends_on: 
-      serviceapi: 
+      webapi: 
+#      serviceapi: 
         condition: service_healthy 
       pipeline0:
         condition: service_healthy
+    links:
+        - webapi:serviceapi
     expose:
       - "8082"
     environment:      
-      - name=my.crawler
+      - name=my-crawler
       - ignoreFolders=**/ForSharing/**
       - ignoreExtensions=.{exe,dll,rar}
       - ignoreFileNames=*backup*
       - maxFileSize=15mb
+      - api_url=http://serviceapi:8081
     volumes:
       - ${pathToCrawl}:/usr/data
-    networks:
-      - internal_network
-  your.crawler:
-    image: ${DOCKER_REGISTRY}/ambar-local-crawler:2.1${DOCKER_IMAGE_VERSION}
-    restart: always
-    depends_on: 
-      serviceapi: 
-        condition: service_healthy 
-      pipeline0:
-        condition: service_healthy
-    expose:
-      - "8082"
-    environment:      
-      - name=your.crawler
-      - ignoreFolders=**/ForSharing/**
-      - ignoreExtensions=.{exe,dll,rar}
-      - ignoreFileNames=*backup*
-      - maxFileSize=15mb
-    volumes:
-      - ${pathToCrawl2}:/usr/data
     networks:
       - internal_network
 
