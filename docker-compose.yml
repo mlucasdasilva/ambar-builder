@@ -237,7 +237,7 @@ services:
       - rabbit_host=amqp://rabbit
     networks:
       - internal_network  
-  my-crawler:
+  my.crawler:
 #    image: repo.ambar.cloud:443/ambar-local-crawler:2.1
     image: ${DOCKER_REGISTRY}/ambar-local-crawler:2.1${DOCKER_IMAGE_VERSION}
     restart: always
@@ -258,7 +258,7 @@ services:
     expose:
       - "8082"
     environment:      
-      - name=my-crawler
+      - name=my.crawler
       - ignoreFolders=**/ForSharing/**
       - ignoreExtensions=.{exe,dll,rar}
       - ignoreFileNames=*backup*
@@ -267,6 +267,27 @@ services:
       - ${pathToCrawl}:/usr/data
     networks:
       - internal_network
+  your.crawler:
+    image: ${DOCKER_REGISTRY}/ambar-local-crawler:2.1${DOCKER_IMAGE_VERSION}
+    restart: always
+    depends_on: 
+      serviceapi: 
+        condition: service_healthy 
+      pipeline0:
+        condition: service_healthy
+    expose:
+      - "8082"
+    environment:      
+      - name=your.crawler
+      - ignoreFolders=**/ForSharing/**
+      - ignoreExtensions=.{exe,dll,rar}
+      - ignoreFileNames=*backup*
+      - maxFileSize=15mb
+    volumes:
+      - ${pathToCrawl2}:/usr/data
+    networks:
+      - internal_network
+
 
 volumes:
    db-data:
