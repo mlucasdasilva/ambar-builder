@@ -266,7 +266,6 @@ services:
       - ignoreExtensions=.{exe,dll,rar}
       - ignoreFileNames=*backup*
       - maxFileSize=15mb
-      - api_url=http://serviceapi:8081
     volumes:
       - ${pathToCrawl}:/usr/data
     networks:
