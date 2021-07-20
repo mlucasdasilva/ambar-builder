@@ -262,9 +262,9 @@ services:
       - "8082"
     environment:      
       - name=my-crawler
-      - ignoreFolders=**/ForSharing/**
+      - ignoreFolders=**/?(ForSharing|.*)/**
       - ignoreExtensions=.{exe,dll,rar}
-      - ignoreFileNames=*backup*
+      - ignoreFileNames=?(*backup*|.*)
       - maxFileSize=15mb
     volumes:
       - ${pathToCrawl}:/usr/data
